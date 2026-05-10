@@ -136,6 +136,14 @@ def start(foreground, no_logs):
         if not no_logs:
             click.echo("  Press Ctrl+C to stop tailing logs.\n")
             _tail_log(log_file)
+            # Ctrl+C pressed — ask user whether to stop the process
+            click.echo("")
+            if click.confirm("是否同时终止 CowAgent 进程?", default=False):
+                with click.Context(stop) as ctx:
+                    stop.invoke(ctx)
+            else:
+                pid = _read_pid()
+                click.echo(f"日志输出已停止，进程仍在运行 (PID: {pid})，您可使用 cow stop 终止进程")
 
 
 @click.command()
